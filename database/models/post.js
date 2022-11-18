@@ -9,6 +9,7 @@ const postInit = (sequelize, DataTypes) => {
     title: {
       type: DataTypes.TEXT,
       allowNull: false,
+      unique: true,
     },
     subTitle: {
       type: DataTypes.TEXT,
