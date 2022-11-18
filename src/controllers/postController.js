@@ -25,6 +25,16 @@ const postController = {
       res.status(400).send(error.message);
     };
   },
+  getAll: async (req, res) => {
+    try {
+      const data = await Post.findAll();
+      data?.length 
+        ? res.status(200).send(data)
+        : res.status(400).send('No data');
+    } catch (error) {
+      res.status(400).send(error.message);
+    };
+  },
 };
 
 module.exports = postController;
