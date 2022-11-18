@@ -2,8 +2,8 @@ const app = require('./app');
 const connection = require('../database/index');
 const User = require('../database/models/user')
 const Post = require('../database/models/post')
-const Comments = require('../database/models/comments')
-const Category = require('../database/models/category')
+const Category = require('../database/models/category');
+const mockData = require('../database/models/bulkCreateDB');
 
 //----------------Build relationships-----------------
 
@@ -20,6 +20,7 @@ Category.belongsToMany(Post, { through: 'Category_Post'})
 //Run server and db
 connection.sync({force: false}).then( () => {
   app.listen(process.env.PORT || 3001, () => {
+    mockData()
     console.log(`Listening at ${process.env.PORT || 3001}`)
   })
 })
