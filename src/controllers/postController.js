@@ -1,4 +1,6 @@
 const Post = require('../../database/models/post');
+const Tags = require('../../database/models/tags');
+
 
 const postController = {
   create: async (req, res) => {
@@ -27,8 +29,29 @@ const postController = {
   },
   getAll: async (req, res) => {
     try {
-      const data = await Post.findAll();
-      data?.length 
+      const { tag } = req.query;
+      if(tag) {
+        const data = await Post.findAll({
+          include: {
+            model: Tags,
+            where: {
+              name: tag
+            }
+          },
+          order: [
+            ['createdAt', 'DESC']
+          ]
+        });
+        return data?.length 
+          ? res.status(200).send(data)
+          : res.status(400).send('No data with Tag');  
+      }
+      const data = await Post.findAll({
+        order: [
+          ['createdAt', 'DESC']
+        ]
+      });
+      return data?.length 
         ? res.status(200).send(data)
         : res.status(400).send('No data');
     } catch (error) {
