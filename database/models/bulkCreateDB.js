@@ -6,7 +6,7 @@ const mockData = async () => {
   try {
     const post = [
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-1",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
@@ -16,7 +16,7 @@ const mockData = async () => {
         viewed: 5,
       },
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-2",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
@@ -26,7 +26,7 @@ const mockData = async () => {
         viewed: 5,
       },
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-3",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
@@ -36,7 +36,7 @@ const mockData = async () => {
         viewed: 5,
       },
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-4",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
@@ -46,7 +46,7 @@ const mockData = async () => {
         viewed: 5,
       },
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-5",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
@@ -56,7 +56,7 @@ const mockData = async () => {
         viewed: 5,
       },
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-6",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
@@ -66,7 +66,7 @@ const mockData = async () => {
         viewed: 5,
       },
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-7",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
@@ -76,7 +76,7 @@ const mockData = async () => {
         viewed: 5,
       },
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-8",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
@@ -86,7 +86,7 @@ const mockData = async () => {
         viewed: 5,
       },
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-9",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
@@ -96,7 +96,7 @@ const mockData = async () => {
         viewed: 5,
       },
       {
-        title: "Lorem ipsum dolor sit amet",
+        title: "Lorem ipsum dolor sit amet-10",
         subTitle:
           "Ad cumque perspiciatis qui voluptatem iste qui omnis veniam aut rerum",
         image:
