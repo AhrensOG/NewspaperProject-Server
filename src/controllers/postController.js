@@ -29,7 +29,24 @@ const postController = {
   },
   getAll: async (req, res) => {
     try {
-      const { tag } = req.query;
+      const { tag , limit} = req.query;
+      if(tag && limit) {
+        const data = await Post.findAll({
+          include: {
+            model: Tags,
+            where: {
+              name: tag
+            }
+          },
+          order: [
+            ['createdAt', 'DESC']
+          ],
+          limit: limit
+        });
+        return data?.length 
+          ? res.status(200).send(data)
+          : res.status(400).send('No data with Tag');  
+      }
       if(tag) {
         const data = await Post.findAll({
           include: {
