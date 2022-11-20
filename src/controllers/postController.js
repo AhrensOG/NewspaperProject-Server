@@ -1,3 +1,4 @@
+const Category = require('../../database/models/category');
 const Post = require('../../database/models/post');
 const Tags = require('../../database/models/tags');
 
@@ -32,12 +33,20 @@ const postController = {
       const { tag , limit} = req.query;
       if(tag && limit) {
         const data = await Post.findAll({
-          include: {
-            model: Tags,
-            where: {
-              name: tag
-            }
-          },
+          include: [
+            {
+              model: Tags,
+              where: {
+                name: tag
+              }
+            },
+            {
+              model: Category,
+              through: {
+                attributes: []
+              }
+            },
+          ],
           order: [
             ['createdAt', 'DESC']
           ],
@@ -45,23 +54,31 @@ const postController = {
         });
         return data?.length 
           ? res.status(200).send(data)
-          : res.status(400).send('No data with Tag');  
+          : res.status(400).send(`No data with Tag ${tag}`);  
       }
       if(tag) {
         const data = await Post.findAll({
-          include: {
-            model: Tags,
-            where: {
-              name: tag
-            }
-          },
+          include: [
+            {
+              model: Tags,
+              where: {
+                name: tag
+              }
+            },
+            {
+              model: Category,
+              through: {
+                attributes: []
+              }
+            },
+          ],
           order: [
             ['createdAt', 'DESC']
           ]
         });
         return data?.length 
           ? res.status(200).send(data)
-          : res.status(400).send('No data with Tag');  
+          : res.status(400).send(`No data with Tag ${tag}`);  
       }
       const data = await Post.findAll({
         order: [
