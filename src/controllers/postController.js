@@ -32,6 +32,7 @@ const postController = {
   getAll: async (req, res) => {
     try {
       const { tag , limit} = req.query;
+      if(tag === 'undefined') return res.status(200).send([])
       if(tag && limit) {
         const data = await Post.findAll({
           include: [
@@ -82,6 +83,17 @@ const postController = {
           : res.status(400).send(`No data with Tag ${tag}`);  
       }
       const data = await Post.findAll({
+        include: [
+          {
+            model: Tags,
+          },
+          {
+            model: Category,
+            through: {
+              attributes: []
+            }
+          },
+        ],
         order: [
           ['createdAt', 'DESC']
         ]
@@ -93,14 +105,50 @@ const postController = {
       res.status(400).send(error.message);
     };
   },
+  getByCategory: async (req, res) => {
+    try {
+      const { name } = req.query;
+
+      if(name === 'undefined') {
+        return res.status(200).send([])
+      };
+
+      const data = await Post.findAll({
+        include: [
+          {
+            model: Tags,
+          },
+          {
+            model: Category,
+            through: {
+              attributes: []
+            },
+            where:{
+              name: name
+            }
+          },
+        ],
+        order: [
+          ['createdAt', 'DESC']
+        ],
+      })
+      return data?.length 
+        ? res.status(200).send(data)
+        : res.status(400).send(`No data with Categry ${name}`); 
+    } catch (error) {
+      res.status(400).send({'Error in post controller': error.message})
+    }
+  },
   getDetail: async (req, res) => {
     try {
-      const {title} = req.query
-      if(title ==="undefined") {
-        []
+      const {id} = req.query
+
+      if(id === "undefined") {
+        return res.status(200).send([])
       }
-      if(!title) {
-        res.status(400).send("A title or tag is missing")
+
+      if(!id) {
+        res.status(400).send("A id is missing")
       } else {
         const data = await Post.findOne({
           include: [
@@ -115,7 +163,7 @@ const postController = {
             }
           ],
           where:{
-            title: title,
+            id: id,
           }
         })
         if(!data) {
