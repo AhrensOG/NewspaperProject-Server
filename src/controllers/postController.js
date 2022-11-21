@@ -81,6 +81,17 @@ const postController = {
           : res.status(400).send(`No data with Tag ${tag}`);  
       }
       const data = await Post.findAll({
+        include: [
+          {
+            model: Tags,
+          },
+          {
+            model: Category,
+            through: {
+              attributes: []
+            }
+          },
+        ],
         order: [
           ['createdAt', 'DESC']
         ]
@@ -92,6 +103,40 @@ const postController = {
       res.status(400).send(error.message);
     };
   },
+  getByCategory: async (req, res) => {
+    try {
+      const { name } = req.query;
+
+      if(name === 'undefined') {
+        return res.status(200).send([])
+      };
+
+      const data = await Post.findAll({
+        include: [
+          {
+            model: Tags,
+          },
+          {
+            model: Category,
+            through: {
+              attributes: []
+            },
+            where:{
+              name: name
+            }
+          },
+        ],
+        order: [
+          ['createdAt', 'DESC']
+        ],
+      })
+      return data?.length 
+        ? res.status(200).send(data)
+        : res.status(400).send(`No data with Categry ${name}`); 
+    } catch (error) {
+      res.status(400).send({'Error in post controller': error.message})
+    }
+  }
 };
 
 module.exports = postController;
