@@ -1,6 +1,7 @@
 const Category = require('../../database/models/category');
 const Post = require('../../database/models/post');
 const Tags = require('../../database/models/tags');
+const User = require('../../database/models/user');
 
 
 const postController = {
@@ -92,6 +93,41 @@ const postController = {
       res.status(400).send(error.message);
     };
   },
+  getDetail: async (req, res) => {
+    try {
+      const {title} = req.query
+      if(title ==="undefined") {
+        []
+      }
+      if(!title) {
+        res.status(400).send("A title or tag is missing")
+      } else {
+        const data = await Post.findOne({
+          include: [
+            {
+              model: Category,
+              through: {
+                attributes: [],
+              }
+            },
+            {
+              model: Tags,
+            }
+          ],
+          where:{
+            title: title,
+          }
+        })
+        if(!data) {
+          res.status(404).send("New not found")
+        } else {
+          res.status(200).send(data)
+        }
+      }     
+    } catch (error) {
+      res.status(500).send(error.message)
+    }
+  }
 };
 
 module.exports = postController;

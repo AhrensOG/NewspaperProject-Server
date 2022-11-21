@@ -5,5 +5,6 @@ const router = Router();
 
 router.post('/', postController.create);
 router.get('/', postController.getAll);
+router.get('/detail', postController.getDetail)
 
 module.exports = router;
