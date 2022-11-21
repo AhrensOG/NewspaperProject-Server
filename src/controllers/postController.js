@@ -32,6 +32,7 @@ const postController = {
   getAll: async (req, res) => {
     try {
       const { tag , limit} = req.query;
+      if(tag === 'undefined') return res.status(200).send([])
       if(tag && limit) {
         const data = await Post.findAll({
           include: [
@@ -140,12 +141,14 @@ const postController = {
   },
   getDetail: async (req, res) => {
     try {
-      const {title} = req.query
-      if(title ==="undefined") {
-        []
+      const {id} = req.query
+
+      if(id === "undefined") {
+        return res.status(200).send([])
       }
-      if(!title) {
-        res.status(400).send("A title or tag is missing")
+
+      if(!id) {
+        res.status(400).send("A id is missing")
       } else {
         const data = await Post.findOne({
           include: [
@@ -160,7 +163,7 @@ const postController = {
             }
           ],
           where:{
-            title: title,
+            id: id,
           }
         })
         if(!data) {
