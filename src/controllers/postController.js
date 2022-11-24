@@ -7,22 +7,49 @@ const User = require('../../database/models/user');
 const postController = {
   create: async (req, res) => {
     try {
-      const { title, subTitle, image, description } = req.body;
+      const { title, subTitle, image, description, firstPlain, secondPlain, thirdPlain, isAd, category, tag } = req.body;
 
-      if( !title || !subTitle || !image || !description ) return res.status(400).send('Missing Data');
+      if( !title || !subTitle || !image || !description || firstPlain === undefined || secondPlain === undefined || thirdPlain === undefined || isAd === undefined || !category || !tag ) return res.status(400).send('Missing Data');
 
       await Post.create({
         title,
         subTitle,
         image,
         description,
-        viewed: 0
+        viewed: 0,
+        firstPlain,
+        secondPlain,
+        thirdPlain,
+        isAd,
       });
 
       const newPost = await Post.findOne( { where: { title } });
+      const foundTag = await Tags.findByPk(tag);
+      const categories = [];
+      for (let i = 0; i < category.length; i++) {
+        const element = await Category.findByPk(category[i]);
+        categories.push(element)
+      }
+      await foundTag.addPost(newPost);
+      await newPost.addCategories(categories)
 
-      newPost
-        ? res.status(200).send(newPost)
+      const createdPost = await Post.findOne({
+        include: [
+          {
+            model: Tags,
+          },
+          {
+            model: Category,
+            through: {
+              attributes: []
+            }
+          },
+        ],
+        where: { title } 
+      })
+
+      createdPost
+        ? res.status(200).send(createdPost)
         : res.status(400).send('Error creating the post');
 
     } catch (error) {
