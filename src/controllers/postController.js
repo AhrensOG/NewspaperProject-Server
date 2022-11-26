@@ -29,6 +29,23 @@ const postController = {
       res.status(400).send(error.message);
     };
   },
+  delete: async (req, res) => {
+    try {
+      const {id} = req.query
+      if(!id) {
+        return res.status(400).send("An id is required")
+      } else {
+        await Post.destroy({
+          where: {
+            id
+          },
+        })
+        res.status(200).send("Post deleted succesfully")
+      }
+    } catch (e) {
+      return res.status(500).send(e.message)
+    }
+  },
   getAll: async (req, res) => {
     try {
       const { tag , limit} = req.query;
