@@ -113,7 +113,24 @@ const postController = {
       const news = await Post.findByPk(id, {include:[ {model: Tags}, {model: Category, through: { attributes: [] }} ] })
       return res.status(200).send(news);
     } catch (e) {
-      res.status(500).send(e)
+      res.status(400).send(e)
+    }
+  },
+  delete: async (req, res) => {
+    try {
+      const {id} = req.query
+      if(!id) {
+        return res.status(400).send("An id is required")
+      } else {
+        await Post.destroy({
+          where: {
+            id
+          },
+        })
+        res.status(200).send("Post deleted succesfully")
+      }
+    } catch (e) {
+      return res.status(400).send(e.message)
     }
   },
   getAll: async (req, res) => {
