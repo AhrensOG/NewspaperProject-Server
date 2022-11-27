@@ -2,6 +2,7 @@ const Category = require('../../database/models/category');
 const Post = require('../../database/models/post');
 const Tags = require('../../database/models/tags');
 const User = require('../../database/models/user');
+const  sanitizeHtml  =  require ('sanitize-html');
 
 
 const postController = {
@@ -135,7 +136,7 @@ const postController = {
   },
   getAll: async (req, res) => {
     try {
-      const { tag , limit} = req.query;
+      const { tag , limit, parsed} = req.query;
       if(tag === 'undefined') return res.status(200).send([])
       if(tag && limit) {
         const data = await Post.findAll({
@@ -202,6 +203,20 @@ const postController = {
           ['createdAt', 'DESC']
         ]
       });
+      if(parsed) {
+        const clean = data
+        for (let i = 0; i < clean.length; i++) {
+          clean[i].description = sanitizeHtml(data[i].description, {
+            allowedTags: [],
+            allowedAttributes: {}
+          })
+        }
+        console.log(clean[0])
+        return clean?.length 
+        ? res.status(200).send(clean)
+        : res.status(400).send('No data clean');
+      }
+
       return data?.length 
         ? res.status(200).send(data)
         : res.status(400).send('No data');
