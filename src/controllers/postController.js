@@ -7,9 +7,12 @@ const User = require('../../database/models/user');
 const postController = {
   create: async (req, res) => {
     try {
-      const { title, subTitle, image, description, firstPlain, secondPlain, thirdPlain, isAd, category, tag } = req.body;
+      const { title, subTitle, image, description, type, category, tag, isAd } = req.body;
 
-      if( !title || !subTitle || !image || !description || firstPlain === undefined || secondPlain === undefined || thirdPlain === undefined || isAd === undefined || !category || !tag ) return res.status(400).send('Missing Data');
+      if( !title || !subTitle || !image || !description || !type || !category || !tag ) return res.status(400).send('Missing Data');
+
+      const post = await Post.findOne( { where: { title } } )
+      if(post) return res.status(400).send('Ya existe una noticia con ese titulo.')
 
       await Post.create({
         title,
@@ -17,21 +20,21 @@ const postController = {
         image,
         description,
         viewed: 0,
-        firstPlain,
-        secondPlain,
-        thirdPlain,
-        isAd,
+        firstPlain: type === 'firstPlain' ? true : false, 
+        secondPlain: type === 'secondPlain' ? true : false,
+        thirdPlain: type === 'thirdPlain' ? true : false,
+        isAd
       });
 
       const newPost = await Post.findOne( { where: { title } });
-      const foundTag = await Tags.findByPk(tag);
+      const foundTag = await Tags.findOne({ where: { name: tag } });
       const categories = [];
       for (let i = 0; i < category.length; i++) {
-        const element = await Category.findByPk(category[i]);
+        const element = await Category.findOne({ where: { name: category[i] } });
         categories.push(element)
       }
       await foundTag.addPost(newPost);
-      await newPost.addCategories(categories)
+      await newPost.setCategories(categories)
 
       const createdPost = await Post.findOne({
         include: [
@@ -55,6 +58,63 @@ const postController = {
     } catch (error) {
       res.status(400).send(error.message);
     };
+  },
+  update: async(req, res) => {
+    try {
+      const {id, title, subTitle, image, content, tag, categories, type, isAd } = req.body;
+      if (!id) {
+        return res.status(400).send("An id is requeried")
+      } else {
+        if (title) {
+          await Post.update({ title }, { where: { id } } )
+        } 
+        if (subTitle) {
+          await Post.update( { subTitle }, { where: { id } } )
+        }
+        if (image) {
+          await Post.update({ image }, { where: { id } } )
+        }
+        if (content) {
+          await Post.update({ description: content }, { where: { id } } )
+        }
+        if (tag) {
+          const news = await Post.findOne({where: { id }})
+          const foundTag = await Tags.findOne({ where: { name: tag } });
+          await foundTag.addPost(news);
+        }
+        if (categories) {
+          const news = await Post.findOne({where: { id }})
+          const categoriesArray = []
+          for (let i = 0; i < categories.length; i++) {
+            const element = await Category.findOne({ where: { name: categories[i] } });
+            categoriesArray.push(element)
+          }
+          await news.setCategories(categoriesArray)
+        }
+      }
+
+      if(type === 'firstPlain'){
+        await Post.update({ firstPlain: true, SecondPlain: false, thirdPlain: false }, { where: { id } })
+      }
+      if(type === 'secondPlain'){
+        await Post.update({ SecondPlain: true, firstPlain: false, thirdPlain: false  }, { where: { id } })
+      }
+      if(type === 'thirdPlain'){
+        await Post.update({ thirdPlain: true, SecondPlain: false, firstPlain: false  }, { where: { id } })
+      }
+      if(type === 'none'){
+        await Post.update({ firstPlain: false, secondPlain: false, thirdPlain: false }, { where: { id } })
+      }
+
+      if(isAd !== undefined) {
+        await Post.update({ isAd }, { where: { id } })
+      }
+
+      const news = await Post.findByPk(id, {include:[ {model: Tags}, {model: Category, through: { attributes: [] }} ] })
+      return res.status(200).send(news);
+    } catch (e) {
+      res.status(500).send(e)
+    }
   },
   getAll: async (req, res) => {
     try {
