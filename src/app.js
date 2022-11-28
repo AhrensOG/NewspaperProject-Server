@@ -5,6 +5,8 @@ const cors = require('cors');
 
 const postRouter = require('./routes/postRouter');
 const categoryRouter = require('./routes/categoryRouter');
+const tagsRouter = require('./routes/tagsRouter')
+const userRouter = require('./routes/userRouter')
 
 const app = express();
 
@@ -15,5 +17,7 @@ app.use(cookieParser());
 
 app.use('/post', postRouter);
 app.use('/category', categoryRouter);
+app.use('/tags', tagsRouter)
+app.use('/user', userRouter)
 
 module.exports = app;

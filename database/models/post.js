@@ -16,7 +16,7 @@ const postInit = (sequelize, DataTypes) => {
       allowNull: true
     },
     image: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false
     },
     description: {
@@ -26,6 +26,26 @@ const postInit = (sequelize, DataTypes) => {
     viewed: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    firstPlain: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    SecondPlain: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    thirdPlain: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    isAd: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     },
   }, {
     sequelize,
