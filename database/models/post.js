@@ -16,7 +16,7 @@ const postInit = (sequelize, DataTypes) => {
       allowNull: true
     },
     image: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false
     },
     description: {
