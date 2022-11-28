@@ -312,11 +312,13 @@ const mockData = async () => {
         firstName: "John",
         lastName: "Doe",
         email: "user@user.com",
+        password: "this-is-a-passsword",
         isAdmin: false,
       },
       {
         firstName: "Pepe",
         lastName: "Doe",
+        password: "this-is-a-passsword-2",
         email: "admin@admin.com",
         isAdmin: true,
       },
