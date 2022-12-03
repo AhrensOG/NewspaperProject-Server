@@ -211,7 +211,6 @@ const postController = {
             allowedAttributes: {}
           })
         }
-        console.log(clean[0])
         return clean?.length 
         ? res.status(200).send(clean)
         : res.status(400).send('No data clean');
