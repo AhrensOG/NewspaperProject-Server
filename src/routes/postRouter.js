@@ -9,5 +9,6 @@ router.delete('/', postController.delete)
 router.get('/', postController.getAll);
 router.get('/category', postController.getByCategory);
 router.get('/detail', postController.getDetail)
+router.get('/plain', postController.getByPlain)
 
 module.exports = router;
