@@ -1,19 +1,29 @@
-const Category = require('../../database/models/category');
-const Post = require('../../database/models/post');
-const Tags = require('../../database/models/tags');
-const User = require('../../database/models/user');
-const  sanitizeHtml  =  require ('sanitize-html');
-
+const Category = require("../../database/models/category");
+const Post = require("../../database/models/post");
+const Tags = require("../../database/models/tags");
+const User = require("../../database/models/user");
+const sanitizeHtml = require("sanitize-html");
 
 const postController = {
   create: async (req, res) => {
     try {
-      const { title, subTitle, image, description, type, category, tag, isAd } = req.body;
+      const { title, subTitle, image, description, type, category, tag, isAd } =
+        req.body;
 
-      if( !title || !subTitle || !image || !description || !type || !category || !tag ) return res.status(400).send('Missing Data');
+      if (
+        !title ||
+        !subTitle ||
+        !image ||
+        !description ||
+        !type ||
+        !category ||
+        !tag
+      )
+        return res.status(400).send("Missing Data");
 
-      const post = await Post.findOne( { where: { title } } )
-      if(post) return res.status(400).send('Ya existe una noticia con ese titulo.')
+      const post = await Post.findOne({ where: { title } });
+      if (post)
+        return res.status(400).send("Ya existe una noticia con ese titulo.");
 
       await Post.create({
         title,
@@ -21,21 +31,23 @@ const postController = {
         image,
         description,
         viewed: 0,
-        firstPlain: type === 'firstPlain' ? true : false, 
-        secondPlain: type === 'secondPlain' ? true : false,
-        thirdPlain: type === 'thirdPlain' ? true : false,
-        isAd
+        firstPlain: type === "firstPlain" ? true : false,
+        secondPlain: type === "secondPlain" ? true : false,
+        thirdPlain: type === "thirdPlain" ? true : false,
+        isAd,
       });
 
-      const newPost = await Post.findOne( { where: { title } });
+      const newPost = await Post.findOne({ where: { title } });
       const foundTag = await Tags.findOne({ where: { name: tag } });
       const categories = [];
       for (let i = 0; i < category.length; i++) {
-        const element = await Category.findOne({ where: { name: category[i] } });
-        categories.push(element)
+        const element = await Category.findOne({
+          where: { name: category[i] },
+        });
+        categories.push(element);
       }
       await foundTag.addPost(newPost);
-      await newPost.setCategories(categories)
+      await newPost.setCategories(categories);
 
       const createdPost = await Post.findOne({
         include: [
@@ -45,147 +57,171 @@ const postController = {
           {
             model: Category,
             through: {
-              attributes: []
-            }
+              attributes: [],
+            },
           },
         ],
-        where: { title } 
-      })
+        where: { title },
+      });
 
       createdPost
         ? res.status(200).send(createdPost)
-        : res.status(400).send('Error creating the post');
-
+        : res.status(400).send("Error creating the post");
     } catch (error) {
       res.status(400).send(error.message);
-    };
+    }
   },
-  update: async(req, res) => {
+  update: async (req, res) => {
     try {
-      const {id, title, subTitle, image, content, tag, categories, type, isAd } = req.body;
+      const {
+        id,
+        title,
+        subTitle,
+        image,
+        content,
+        tag,
+        categories,
+        type,
+        isAd,
+      } = req.body;
       if (!id) {
-        return res.status(400).send("An id is requeried")
+        return res.status(400).send("An id is requeried");
       } else {
         if (title) {
-          await Post.update({ title }, { where: { id } } )
-        } 
+          await Post.update({ title }, { where: { id } });
+        }
         if (subTitle) {
-          await Post.update( { subTitle }, { where: { id } } )
+          await Post.update({ subTitle }, { where: { id } });
         }
         if (image) {
-          await Post.update({ image }, { where: { id } } )
+          await Post.update({ image }, { where: { id } });
         }
         if (content) {
-          await Post.update({ description: content }, { where: { id } } )
+          await Post.update({ description: content }, { where: { id } });
         }
         if (tag) {
-          const news = await Post.findOne({where: { id }})
+          const news = await Post.findOne({ where: { id } });
           const foundTag = await Tags.findOne({ where: { name: tag } });
           await foundTag.addPost(news);
         }
         if (categories) {
-          const news = await Post.findOne({where: { id }})
-          const categoriesArray = []
+          const news = await Post.findOne({ where: { id } });
+          const categoriesArray = [];
           for (let i = 0; i < categories.length; i++) {
-            const element = await Category.findOne({ where: { name: categories[i] } });
-            categoriesArray.push(element)
+            const element = await Category.findOne({
+              where: { name: categories[i] },
+            });
+            categoriesArray.push(element);
           }
-          await news.setCategories(categoriesArray)
+          await news.setCategories(categoriesArray);
         }
       }
 
-      if(type === 'firstPlain'){
-        await Post.update({ firstPlain: true, SecondPlain: false, thirdPlain: false }, { where: { id } })
+      if (type === "firstPlain") {
+        await Post.update(
+          { firstPlain: true, SecondPlain: false, thirdPlain: false },
+          { where: { id } }
+        );
       }
-      if(type === 'secondPlain'){
-        await Post.update({ SecondPlain: true, firstPlain: false, thirdPlain: false  }, { where: { id } })
+      if (type === "secondPlain") {
+        await Post.update(
+          { SecondPlain: true, firstPlain: false, thirdPlain: false },
+          { where: { id } }
+        );
       }
-      if(type === 'thirdPlain'){
-        await Post.update({ thirdPlain: true, SecondPlain: false, firstPlain: false  }, { where: { id } })
+      if (type === "thirdPlain") {
+        await Post.update(
+          { thirdPlain: true, SecondPlain: false, firstPlain: false },
+          { where: { id } }
+        );
       }
-      if(type === 'none'){
-        await Post.update({ firstPlain: false, secondPlain: false, thirdPlain: false }, { where: { id } })
+      if (type === "none") {
+        await Post.update(
+          { firstPlain: false, secondPlain: false, thirdPlain: false },
+          { where: { id } }
+        );
       }
 
-      if(isAd !== undefined) {
-        await Post.update({ isAd }, { where: { id } })
+      if (isAd !== undefined) {
+        await Post.update({ isAd }, { where: { id } });
       }
 
-      const news = await Post.findByPk(id, {include:[ {model: Tags}, {model: Category, through: { attributes: [] }} ] })
+      const news = await Post.findByPk(id, {
+        include: [
+          { model: Tags },
+          { model: Category, through: { attributes: [] } },
+        ],
+      });
       return res.status(200).send(news);
     } catch (e) {
-      res.status(400).send(e)
+      res.status(400).send(e);
     }
   },
   delete: async (req, res) => {
     try {
-      const {id} = req.query
-      if(!id) {
-        return res.status(400).send("An id is required")
+      const { id } = req.query;
+      if (!id) {
+        return res.status(400).send("An id is required");
       } else {
         await Post.destroy({
           where: {
-            id
+            id,
           },
-        })
-        res.status(200).send("Post deleted succesfully")
+        });
+        res.status(200).send("Post deleted succesfully");
       }
     } catch (e) {
-      return res.status(400).send(e.message)
+      return res.status(400).send(e.message);
     }
   },
   getAll: async (req, res) => {
     try {
-      const { tag , limit, parsed} = req.query;
-      if(tag === 'undefined') return res.status(200).send([])
-      if(tag && limit) {
+      const { tag, limit, parsed } = req.query;
+      if (tag === "undefined") return res.status(200).send([]);
+      if (tag && limit) {
         const data = await Post.findAll({
           include: [
             {
               model: Tags,
               where: {
-                name: tag
-              }
+                name: tag,
+              },
             },
             {
               model: Category,
               through: {
-                attributes: []
-              }
+                attributes: [],
+              },
             },
           ],
-          order: [
-            ['createdAt', 'DESC']
-          ],
-          limit: limit
+          order: [["createdAt", "DESC"]],
+          limit: limit,
         });
-        return data?.length 
+        return data?.length
           ? res.status(200).send(data)
-          : res.status(400).send(`No data with Tag ${tag}`);  
+          : res.status(400).send(`No data with Tag ${tag}`);
       }
-      if(tag) {
+      if (tag) {
         const data = await Post.findAll({
           include: [
             {
               model: Tags,
               where: {
-                name: tag
-              }
+                name: tag,
+              },
             },
             {
               model: Category,
               through: {
-                attributes: []
-              }
+                attributes: [],
+              },
             },
           ],
-          order: [
-            ['createdAt', 'DESC']
-          ]
+          order: [["createdAt", "DESC"]],
         });
-        return data?.length 
+        return data?.length
           ? res.status(200).send(data)
-          : res.status(400).send(`No data with Tag ${tag}`);  
+          : res.status(400).send(`No data with Tag ${tag}`);
       }
       const data = await Post.findAll({
         include: [
@@ -195,42 +231,39 @@ const postController = {
           {
             model: Category,
             through: {
-              attributes: []
-            }
+              attributes: [],
+            },
           },
         ],
-        order: [
-          ['createdAt', 'DESC']
-        ]
+        order: [["createdAt", "DESC"]],
       });
-      if(parsed) {
-        const clean = data
+      if (parsed) {
+        const clean = data;
         for (let i = 0; i < clean.length; i++) {
           clean[i].description = sanitizeHtml(data[i].description, {
             allowedTags: [],
-            allowedAttributes: {}
-          })
+            allowedAttributes: {},
+          });
         }
-        console.log(clean[0])
-        return clean?.length 
-        ? res.status(200).send(clean)
-        : res.status(400).send('No data clean');
+        return clean?.length
+          ? res.status(200).send(clean)
+          : res.status(400).send("No data clean");
       }
 
-      return data?.length 
+      return data?.length
         ? res.status(200).send(data)
-        : res.status(400).send('No data');
+        : res.status(400).send("No data");
     } catch (error) {
       res.status(400).send(error.message);
-    };
+    }
   },
   getByCategory: async (req, res) => {
     try {
       const { name } = req.query;
 
-      if(name === 'undefined') {
-        return res.status(200).send([])
-      };
+      if (name === "undefined") {
+        return res.status(200).send([]);
+      }
 
       const data = await Post.findAll({
         include: [
@@ -240,34 +273,32 @@ const postController = {
           {
             model: Category,
             through: {
-              attributes: []
+              attributes: [],
             },
-            where:{
-              name: name
-            }
+            where: {
+              name: name,
+            },
           },
         ],
-        order: [
-          ['createdAt', 'DESC']
-        ],
-      })
-      return data?.length 
+        order: [["createdAt", "DESC"]],
+      });
+      return data?.length
         ? res.status(200).send(data)
-        : res.status(400).send(`No data with Categry ${name}`); 
+        : res.status(400).send(`No data with Categry ${name}`);
     } catch (error) {
-      res.status(400).send({'Error in post controller': error.message})
+      res.status(400).send({ "Error in post controller": error.message });
     }
   },
   getDetail: async (req, res) => {
     try {
-      const {id} = req.query
+      const { id } = req.query;
 
-      if(id === "undefined") {
-        return res.status(200).send([])
+      if (id === "undefined") {
+        return res.status(200).send([]);
       }
 
-      if(!id) {
-        res.status(400).send("A id is missing")
+      if (!id) {
+        res.status(400).send("A id is missing");
       } else {
         const data = await Post.findOne({
           include: [
@@ -275,26 +306,101 @@ const postController = {
               model: Category,
               through: {
                 attributes: [],
-              }
+              },
             },
             {
               model: Tags,
-            }
+            },
           ],
-          where:{
+          where: {
             id: id,
-          }
-        })
-        if(!data) {
-          res.status(404).send("New not found")
+          },
+        });
+        if (!data) {
+          res.status(404).send("New not found");
         } else {
-          res.status(200).send(data)
+          res.status(200).send(data);
         }
-      }     
+      }
     } catch (error) {
-      res.status(500).send(error.message)
+      res.status(500).send(error.message);
     }
-  }
+  },
+  getByPlain: async (req, res) => {
+    const { firstPlain, secondPlain, thirdPlain } = req.query;
+    if (firstPlain) {
+      const post = await Post.findAll({
+        include: [
+          {
+            model: Tags,
+          },
+          {
+            model: Category,
+            through: {
+              attributes: [],
+            },
+          },
+        ],
+        where: {
+          firstPlain: true,
+        },
+        order: [["createdAt", "DESC"]],
+      });
+      if (post) {
+        return res.status(200).send(post);
+      }
+      return res.status(400).send("The posts doesn't exists");
+    }
+    if (secondPlain) {
+      const post = await Post.findAll({
+        include: [
+          {
+            model: Tags,
+          },
+          {
+            model: Category,
+            through: {
+              attributes: [],
+            },
+          },
+        ],
+        where: {
+          secondPlain: true,
+        },
+        order: [["createdAt", "DESC"]],
+      });
+      if (post) {
+        return res.status(200).send(post);
+      }
+      return res.status(400).send("The posts doesn't exists");
+    }
+    if (thirdPlain) {
+      const post = await Post.findAll({
+        include: [
+          {
+            model: Tags,
+          },
+          {
+            model: Category,
+            through: {
+              attributes: [],
+            },
+          },
+        ],
+        where: {
+          thirdPlain: true,
+        },
+        order: [["createdAt", "DESC"]],
+      });
+      if (post) {
+        return res.status(200).send(post);
+      }
+      return res.status(400).send("The posts doesn't exists");
+    }
+    return res.status(400).send("missing data");
+  },
+  //ORDENADOS POR FECHA
+  //IS AD
 };
 
 module.exports = postController;

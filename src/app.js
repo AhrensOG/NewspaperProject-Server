@@ -6,7 +6,8 @@ const cors = require('cors');
 const postRouter = require('./routes/postRouter');
 const categoryRouter = require('./routes/categoryRouter');
 const tagsRouter = require('./routes/tagsRouter')
-const userRouter = require('./routes/userRouter')
+const authRouter = require('./routes/authRouter')
+const usersRouter = require('./routes/usersRouter')
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use('/post', postRouter);
 app.use('/category', categoryRouter);
 app.use('/tags', tagsRouter)
-app.use('/user', userRouter)
+app.use('/auth', authRouter)
+app.use('/user', usersRouter)
 
 module.exports = app;

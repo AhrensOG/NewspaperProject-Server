@@ -32,7 +32,7 @@ const postInit = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false
     },
-    SecondPlain: {
+    secondPlain: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
