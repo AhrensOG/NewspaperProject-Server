@@ -23,7 +23,7 @@ Post.belongsTo(Tags);
 //----------------------------------------------------
 
 //Run server and db
-connection.sync({ force: true }).then(() => {
+connection.sync({ force: false }).then(() => {
   app.listen(process.env.PORT || 3001, () => {
     mockData();
     console.log(`Listening at ${process.env.PORT || 3001}`);
