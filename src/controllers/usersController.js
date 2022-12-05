@@ -12,7 +12,7 @@ const users = {
       
       const flag = await user.findOne({
         where: {
-        email: "user@admin.com"
+        email: "formosaop@admin.com"
       }
     })
     if (!flag) {
@@ -21,7 +21,7 @@ const users = {
       const data = await user.create({
         firstName: "Admin",
         lastName: "Admin",
-        email: "user@admin.com",
+        email: "formosaop@admin.com",
         password: passHash,
         isAdmin: true,
       })
