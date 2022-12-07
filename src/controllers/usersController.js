@@ -38,12 +38,12 @@ const users = {
   deleteUser: async (req, res) => {
     await user.destroy({
       where: {
-        email: "user@admin.com"
+        email: "formosaop@admin.com"
       }
     })
     const flag = await user.findOne({
       where: {
-        email: "user@admin.com"
+        email: "formosaop@admin.com"
       }
     })
     if (flag) {

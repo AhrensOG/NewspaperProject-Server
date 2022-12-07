@@ -10,5 +10,6 @@ router.get('/', postController.getAll);
 router.get('/category', postController.getByCategory);
 router.get('/detail', postController.getDetail)
 router.get('/plain', postController.getByPlain)
+router.get('/search', postController.getBySearch)
 
 module.exports = router;

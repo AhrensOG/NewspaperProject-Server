@@ -1,14 +1,13 @@
 const Category = require("../../database/models/category");
+const { Op } = require("sequelize");
 const Post = require("../../database/models/post");
 const Tags = require("../../database/models/tags");
-const User = require("../../database/models/user");
 const sanitizeHtml = require("sanitize-html");
 
 const postController = {
   create: async (req, res) => {
     try {
-      const { title, subTitle, image, description, type, category, tag, isAd } =
-        req.body;
+      const { title, subTitle, image, description, type, category, tag, isAd } = req.body;
 
       if (
         !title ||
@@ -68,7 +67,8 @@ const postController = {
         ? res.status(200).send(createdPost)
         : res.status(400).send("Error creating the post");
     } catch (error) {
-      res.status(400).send(error.message);
+      console.log(error)
+      res.status(400).send(error);
     }
   },
   update: async (req, res) => {
@@ -344,7 +344,9 @@ const postController = {
         where: {
           firstPlain: true,
         },
-        order: [["createdAt", "DESC"]],
+        order: [
+          ["createdAt", "DESC"],
+        ],
       });
       if (post) {
         return res.status(200).send(post);
@@ -399,8 +401,26 @@ const postController = {
     }
     return res.status(400).send("missing data");
   },
-  //ORDENADOS POR FECHA
-  //IS AD
+  getBySearch: async (req, res) => {
+    const { title } = req.query;
+
+    if (!title) return res.status(400).send("A title is required");
+
+    const titleUpperCase = title.toUpperCase();
+
+    const posts = await Post.findAll();
+
+    const post = posts.filter((e) => {
+      const upperPost = e.dataValues.title.toUpperCase() 
+      if ( upperPost.startsWith(titleUpperCase)) {
+        return e;
+      }
+    });
+
+    if (!post)
+      return res.status(404).send("Posts with that name doesn't exist");
+    return res.status(200).send(post);
+  },
 };
 
 module.exports = postController;
