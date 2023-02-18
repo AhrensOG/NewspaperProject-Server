@@ -119,19 +119,19 @@ const postController = {
 
       if (type === "firstPlain") {
         await Post.update(
-          { firstPlain: true, SecondPlain: false, thirdPlain: false },
+          { firstPlain: true, secondPlain: false, thirdPlain: false },
           { where: { id } }
         );
       }
       if (type === "secondPlain") {
         await Post.update(
-          { SecondPlain: true, firstPlain: false, thirdPlain: false },
+          { secondPlain: true, firstPlain: false, thirdPlain: false },
           { where: { id } }
         );
       }
       if (type === "thirdPlain") {
         await Post.update(
-          { thirdPlain: true, SecondPlain: false, firstPlain: false },
+          { thirdPlain: true, secondPlain: false, firstPlain: false },
           { where: { id } }
         );
       }

@@ -316,10 +316,10 @@ const mockData = async () => {
         isAdmin: false,
       },
       {
-        firstName: "Pepe",
-        lastName: "Doe",
-        password: "this-is-a-passsword-2",
-        email: "admin@admin.com",
+        firstName: "Admin",
+        lastName: "Adm",
+        password: process.env.USER_ADMIN_PASSWORD,
+        email: process.env.USER_ADMIN_EMAIL,
         isAdmin: true,
       },
     ];
