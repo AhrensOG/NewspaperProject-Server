@@ -307,22 +307,6 @@ const mockData = async () => {
         viewed: 5,
       },
     ];
-    const user = [
-      {
-        firstName: "John",
-        lastName: "Doe",
-        email: "user@user.com",
-        password: "this-is-a-passsword",
-        isAdmin: false,
-      },
-      {
-        firstName: "Admin",
-        lastName: "Adm",
-        password: process.env.USER_ADMIN_PASSWORD,
-        email: process.env.USER_ADMIN_EMAIL,
-        isAdmin: true,
-      },
-    ];
     const category = [
       {
         name: "Mundo",
@@ -394,13 +378,13 @@ const mockData = async () => {
         : console.log('Error in TagsTable');
     }
 
-    if (!dbUser?.length) {
-      await User.bulkCreate(user);
-      const dbUserAfter = await User.findAll();
-      dbUserAfter?.length
-        ? console.log("UserTable Actualized")
-        : console.log("Error in UserTable");
-    }
+    // if (!dbUser?.length) {
+    //   await User.bulkCreate(user);
+    //   const dbUserAfter = await User.findAll();
+    //   dbUserAfter?.length
+    //     ? console.log("UserTable Actualized")
+    //     : console.log("Error in UserTable");
+    // }
 
     if (!dbCategory?.length) {
       await Category.bulkCreate(category);
