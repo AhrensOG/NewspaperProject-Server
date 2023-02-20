@@ -9,30 +9,44 @@ const users = {
   },
   createUser: async (req, res) => {
     try {
-      
-      const flag = await user.findOne({
+      const { email, password } = req.body;
+
+      const users = await user.findAll()
+      const foundUser = await user.findOne({
         where: {
-        email: "formosaop@admin.com"
-      }
-    })
-    if (!flag) {
-      const pass = process.env.USER_ADMIN_PASSWORD
-      const passHash = bcrypt.hashSync(pass, 10);   
-      const data = await user.create({
-        firstName: "Admin",
-        lastName: "Admin",
-        email: "formosaop@admin.com",
-        password: passHash,
-        isAdmin: true,
+        email: email
+        }
       })
-      
-      if (data) {
-        return res.status(200).send(data)
+
+      if (!users?.length) {
+        const passHash = bcrypt.hashSync(password, 10);   
+        const data = await user.create({
+          firstName: "Admin",
+          lastName: "Admin",
+          email: email,
+          password: passHash,
+          isAdmin: true,
+        })
+        if (data) {
+          return res.status(200).send('Admin created successfully')
+        }
+      } else if(!foundUser) {
+        const passHash = bcrypt.hashSync(password, 10);   
+        const data = await user.create({
+          firstName: email,
+          lastName: email,
+          email: email,
+          password: passHash,
+          isAdmin: false,
+        })
+        if (data) {
+          return res.status(200).send('User created successfully')
+        }
+      } else {
+        return res.status(400).send("The User already exist!")
       }
-    }
-    return res.status(400).send("The admin already exist!")
-  } catch (e) {
-    res.status(400).send(e.message)
+    } catch (e) {
+      res.status(400).send(e.message)
   }
   },
   deleteUser: async (req, res) => {
