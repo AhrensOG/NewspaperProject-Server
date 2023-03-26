@@ -20,7 +20,10 @@ const login = {
           ],
         });
       } else if (bcrypt.compareSync(password, user.password)) {
-        const id = user.id;
+        const id = {
+          id: user.id,
+          admin: user.isAdmin
+        };
         return res.status(200).send(id);
       } else {
         return res.status(500).json({

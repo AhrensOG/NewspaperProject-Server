@@ -124,7 +124,7 @@ const postController = {
 
       if (type === "firstPlain") {
         await Post.update(
-          { firstPlain: true, SecondPlain: false, thirdPlain: false },
+          { firstPlain: true, secondPlain: false, thirdPlain: false },
           { where: { id } }
         );
       }
