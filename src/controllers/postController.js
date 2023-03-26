@@ -7,14 +7,14 @@ const sanitizeHtml = require("sanitize-html");
 const postController = {
   create: async (req, res) => {
     try {
-      const { title, subTitle, image, description, type, category, tag, isAd } =
-        req.body;
+      const { title, subTitle, image, description, date, type, category, tag, isAd } = req.body;
 
       if (
         !title ||
         !subTitle ||
         !image ||
         !description ||
+        !date ||
         !type ||
         !category ||
         !tag
@@ -30,6 +30,7 @@ const postController = {
         subTitle,
         image,
         description,
+        date,
         viewed: 0,
         firstPlain: type === "firstPlain" ? true : false,
         secondPlain: type === "secondPlain" ? true : false,
@@ -79,6 +80,7 @@ const postController = {
         subTitle,
         image,
         content,
+        date,
         tag,
         categories,
         type,
@@ -98,6 +100,9 @@ const postController = {
         }
         if (content) {
           await Post.update({ description: content }, { where: { id } });
+        }
+        if (date) {
+          await Post.update({ date: date }, { where: { id } });
         }
         if (tag) {
           const news = await Post.findOne({ where: { id } });
@@ -344,7 +349,7 @@ const postController = {
         where: {
           firstPlain: true,
         },
-        order: [["createdAt", "DESC"]],
+        order: [["updatedAt", "DESC"]],
       });
       if (post) {
         return res.status(200).send(post);
@@ -367,7 +372,7 @@ const postController = {
         where: {
           secondPlain: true,
         },
-        order: [["createdAt", "DESC"]],
+        order: [["updatedAt", "DESC"]],
       });
       if (post) {
         return res.status(200).send(post);
@@ -390,7 +395,7 @@ const postController = {
         where: {
           thirdPlain: true,
         },
-        order: [["createdAt", "DESC"]],
+        order: [["updatedAt", "DESC"]],
       });
       if (post) {
         return res.status(200).send(post);
