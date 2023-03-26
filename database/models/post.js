@@ -23,6 +23,10 @@ const postInit = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    date: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     viewed: {
       type: DataTypes.INTEGER,
       allowNull: false,
